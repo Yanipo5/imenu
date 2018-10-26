@@ -1,4 +1,4 @@
-import { PageCategory } from "@/types/page.ts";
+import { PageCategory } from "@/utils/types.ts";
 
 export const pages: Array<PageCategory> = [
   {

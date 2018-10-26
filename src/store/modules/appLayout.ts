@@ -1,5 +1,5 @@
 const getInitalState = () => ({
-  isNavigationDrawerOpen: true
+  isNavigationDrawerOpen: false
 });
 
 export default {

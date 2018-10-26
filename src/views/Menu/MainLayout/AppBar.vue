@@ -1,5 +1,5 @@
 <template>
-  <v-toolbar app clipped-left>
+  <v-toolbar app clipped-left fixed>
     <v-toolbar-side-icon @click="toggleNavigationDrawer" />
     <v-toolbar-title>Imenu</v-toolbar-title>
   </v-toolbar>
