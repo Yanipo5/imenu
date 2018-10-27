@@ -5,21 +5,26 @@
                 <h6 class="title mb-3 text-xs-center">{{name}}</h6>
             </v-flex>
             <v-flex xs2>
-                <v-switch v-model="isSelectedOnly" prepend-icon="star" :hint="'selected'" class="mt-0 pt-0" />
+                <v-layout column>
+                    <v-switch v-model="isSelectedOnly" :prepend-icon="icon" :hint="'selected'" class="mt-0 pt-0" />
+                    <div>Total: {{totalOrderCost}} {{currency}}</div>
+                </v-layout>
             </v-flex>
         </v-layout>
         <v-layout row wrap>
             <v-flex xs12 sm6 v-for="s in menuSorted" :key="s.id">
                 <h5 class="subheading font-weight-bold">{{s.name}}</h5>
                 <v-container grid-list-xl>
-                    <v-layout row v-for="i in s.items" :key="i.id" justify-space-between v-show="!isSelectedOnly || isSelected(s.id,i.id)">
+                    <v-layout row v-for="i in s.items" :key="i.id" justify-space-between v-show="!isSelectedOnly || isSelected(s.id,i.id)" align-baseline>
                         <div>
-                            <v-icon v-show="!isSelected(s.id,i.id)" @click="toggleStar(s.id,i.id)">star_border</v-icon>
-                            <v-icon v-show="isSelected(s.id,i.id)" @click="toggleStar(s.id,i.id)">star</v-icon>
+                            <span class="mr-2">
+                                <v-icon v-show="!isSelected(s.id,i.id)" size="20" @click="toggleStar(s.id,i.id)">star_border</v-icon>
+                                <v-icon v-show="isSelected(s.id,i.id)" size="20" @click="toggleStar(s.id,i.id)">star</v-icon>
+                            </span>
                             <span>{{i.name}}</span>
                         </div>
                         <v-spacer class="ml-3" style="border-bottom:1px dashed" />
-                        <div class="text-spacer">{{i.price}} $</div>
+                        <div class="text-spacer">{{i.price}} {{currency}}</div>
                     </v-layout>
                 </v-container>
             </v-flex>
@@ -30,6 +35,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { mapState, mapGetters } from "vuex";
+import { Section, SectionItem } from "@/utils/types.ts";
 export default Vue.extend({
   data: () => ({
     starObj: {},
@@ -37,7 +43,27 @@ export default Vue.extend({
   }),
   computed: {
     ...mapState("menu", ["name"]),
-    ...mapGetters("menu", ["menuSorted"])
+    ...mapState("menuSetting", ["currency"]),
+    ...mapGetters("menu", ["menuSorted"]),
+    icon(): string {
+      return this.isSelectedOnly ? "star" : "star_border";
+    },
+    totalOrderCost(): number {
+      // @ts-ignore
+      return this.menuSorted.reduce((sum: number, s: Section) => {
+        return (
+          sum +
+          s.items.reduce((i_sum: number, i: SectionItem) => {
+            const s_id = `s${s.id}`;
+            const i_id = `i${i.id}`;
+            const add =
+              // @ts-ignore
+              this.starObj[s_id] && this.starObj[s_id][i_id] ? i.price : 0;
+            return i_sum + add;
+          }, 0)
+        );
+      }, 0);
+    }
   },
   methods: {
     toggleStar(s_id: number, i_id: number): void {

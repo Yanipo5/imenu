@@ -17,8 +17,22 @@ const getInitalState = (): state => ({
           name: "Tasty Burger",
           id: 1,
           ingredientes: "",
-          price: 10,
+          price: 45,
           order: 1
+        },
+        {
+          name: "Pasta",
+          id: 2,
+          ingredientes: "",
+          price: 35,
+          order: 2
+        },
+        {
+          name: "Saled",
+          id: 3,
+          ingredientes: "",
+          price: 22,
+          order: 3
         }
       ]
     },
@@ -31,14 +45,14 @@ const getInitalState = (): state => ({
           name: "Shardone",
           id: 1,
           ingredientes: "",
-          price: 10,
+          price: 19,
           order: 1
         },
         {
           name: "Merlo",
           id: 2,
           ingredientes: "",
-          price: 10,
+          price: 19,
           order: 2
         }
       ]
