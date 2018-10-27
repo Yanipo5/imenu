@@ -43,13 +43,17 @@ export default Vue.extend({
     toggleStar(s_id: number, i_id: number): void {
       const s = `s${s_id}`;
       const i = `i${i_id}`;
+      // @ts-ignore
       if (!this.starObj[s]) Vue.set(this.starObj, s, {});
+      // @ts-ignore
       if (!this.starObj[s][i]) Vue.set(this.starObj[s], i, true);
+      // @ts-ignore
       else Vue.set(this.starObj[s], i, false);
     },
     isSelected(s_id: number, i_id: number): boolean {
       const s = `s${s_id}`;
       const i = `i${i_id}`;
+      // @ts-ignore
       return this.starObj[s] && this.starObj[s][i];
     }
   }

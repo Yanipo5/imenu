@@ -27,18 +27,22 @@ export default Vue.extend({
     ...mapState("menu", ["sections"]),
     ...mapGetters("menu", ["menuSorted"]),
     sectionsLength(): number {
+      // @ts-ignore
       return this.sections.length;
     },
     isDisabled(): boolean {
+      // @ts-ignore
       return this.sections.length < 2;
     }
   },
   methods: {
     ...mapMutations("menu", ["addSection", "deleteSection"]),
     handleAdd(s: Section): void {
+      // @ts-ignore
       this.addSection({ s_id: s.id, order: s.order });
     },
     handleDelete(s: Section): void {
+      // @ts-ignore
       this.deleteSection(s.id);
     }
   }
