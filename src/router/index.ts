@@ -24,7 +24,7 @@ export default new Router({
             {
               path: "edit",
               component: () =>
-                import(/* webpackChunkName: "EditMenu" */ "@/views/Menu/MainLayout/EditMenu/index.vue")
+                import(/* webpackChunkName: "EditMenu" */ "@/views/Menu/EditMenu/index.vue")
             },
             {
               path: "preview",
