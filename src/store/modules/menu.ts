@@ -142,6 +142,5 @@ export default {
 function getStorageMenu(): Array<Section> | null {
   const raw = localStorage.getItem(storage);
   if (!raw) return null;
-  console.log(raw);
   return JSON.parse(raw);
 }
