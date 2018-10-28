@@ -1,5 +1,7 @@
-const { VUE_APP_SECRET: APP_SECRET } = process.env;
-console.log(APP_SECRET);
+const {
+  VUE_APP_SECRET: APP_SECRET,
+  VUE_APP_STORAGE_USER: storage
+} = process.env;
 
 interface state {
   email: string;
@@ -12,7 +14,7 @@ const getInitialSetting = (): state => ({
 });
 
 export default {
-  state: getInitialSetting(),
+  state: Object.assign(getInitialSetting(), getLocalData()),
   getters: {
     isLoggedIn(s: state) {
       return s.loginToken === APP_SECRET;
@@ -28,13 +30,20 @@ export default {
       s.loginToken = token;
     },
     clearUser(s: state): void {
-      Object.assign(s, getInitialSetting());
+      localStorage.clear();
     }
   },
   actions: {
-    login({ commit }: any, email: string) {
+    login({ state, commit }: any, email: string) {
       commit("setEmail", email);
       commit("setloginToken", APP_SECRET);
+      localStorage.setItem(storage, JSON.stringify(state));
     }
   }
 };
+
+function getLocalData(): object | null {
+  const raw = localStorage.getItem(storage);
+  if (!raw) return null;
+  return JSON.parse(raw);
+}

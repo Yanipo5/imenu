@@ -28,7 +28,7 @@ export default {
     ...mapMutations("user", ["clearUser"]),
     signOut() {
       this.clearUser();
-      this.$router.push("/signin");
+      window.location = "/signin";
     }
   }
 };

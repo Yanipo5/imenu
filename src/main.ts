@@ -5,6 +5,7 @@ import App from "./App.vue";
 import "./registerServiceWorker";
 import router from "./router";
 import store from "./store";
+import "@/router/navigation-guards.ts";
 
 Vue.config.productionTip = false;
 

@@ -1,5 +1,5 @@
 import { Section, SectionItem } from "@/utils/types.ts";
-
+const { VUE_APP_STORAGE_MENU: storage } = process.env;
 interface state {
   name: string;
   sections: Array<Section>;
@@ -61,7 +61,9 @@ const getInitalState = (): state => ({
 });
 
 export default {
-  state: getInitalState(),
+  state: Object.assign(getInitalState(), {
+    ...(getStorageMenu() && { sections: getStorageMenu() })
+  }),
   getters: {
     menuSorted(s: state): Array<Section> {
       return s.sections
@@ -120,6 +122,26 @@ export default {
         s.items = s.items.filter((i: SectionItem) => i.id !== i_id);
         return s;
       });
+    },
+    resetMenu(s: state): void {
+      const menu = getStorageMenu();
+      if (!menu) return;
+      s.sections = menu;
+    }
+  },
+  actions: {
+    storeMenu({ state: s }: { state: state }): void {
+      localStorage.setItem(storage, JSON.stringify(s.sections));
+    },
+    resetMenu({ commit }: any): void {
+      commit("resetMenu");
     }
   }
 };
+
+function getStorageMenu(): Array<Section> | null {
+  const raw = localStorage.getItem(storage);
+  if (!raw) return null;
+  console.log(raw);
+  return JSON.parse(raw);
+}
