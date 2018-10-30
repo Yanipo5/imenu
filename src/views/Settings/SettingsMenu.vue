@@ -11,9 +11,6 @@
 import Vue from "vue";
 import { mapState, mapMutations } from "vuex";
 export default Vue.extend({
-  data: () => ({
-    currencies: ["$", "€", "£", "₪"]
-  }),
   computed: {
     ca: {
       get(): string {
@@ -25,7 +22,7 @@ export default Vue.extend({
         this.setCurrency(currency);
       }
     },
-    ...mapState("menuSetting", ["currency"])
+    ...mapState("menuSetting", ["currency", "currencies"])
   },
   methods: {
     ...mapMutations("menuSetting", ["setCurrency"])

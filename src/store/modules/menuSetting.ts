@@ -1,17 +1,19 @@
 interface state {
   currency: string;
+  currencies: Array<string>;
 }
 
 const getInitialSetting = (): state => ({
-  currency: "₪"
+  currency: "₪",
+  currencies: ["$", "€", "£", "₪"]
 });
 
 export default {
   state: getInitialSetting(),
   mutations: {
     setCurrency(s: state, currency: string) {
-      if (typeof currency !== "string")
-        throw new Error("currency not a string");
+      if (!s.currencies.includes(currency))
+        throw new Error("currency not a supported");
       s.currency = currency;
     }
   }
