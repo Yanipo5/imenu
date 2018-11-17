@@ -1,46 +1,55 @@
 <template>
-    <v-container>
-        <v-layout row align-baseline>
-            <v-flex xs10>
-                <h6 class="title mb-3 text-xs-center">{{name}}</h6>
-            </v-flex>
-            <v-flex xs2>
-                <v-layout column>
-                    <v-switch v-model="isSelectedOnly" :prepend-icon="icon" :hint="'selected'" class="mt-0 pt-0" />
-                    <div>Total: {{totalOrderCost}} {{currency}}</div>
-                </v-layout>
-            </v-flex>
-        </v-layout>
-        <v-layout row wrap>
-            <v-flex xs12 sm6 v-for="s in menuSorted" :key="s.id">
-                <h5 class="subheading font-weight-bold">{{s.name}}</h5>
-                <v-container grid-list-xl>
-                    <v-layout row v-for="i in s.items" :key="i.id" justify-space-between v-show="!isSelectedOnly || isSelected(s.id,i.id)" align-baseline>
-                        <div>
-                            <span class="mr-2">
-                                <v-icon v-show="!isSelected(s.id,i.id)" size="20" @click="toggleStar(s.id,i.id)">star_border</v-icon>
-                                <v-icon v-show="isSelected(s.id,i.id)" size="20" @click="toggleStar(s.id,i.id)">star</v-icon>
-                            </span>
-                            <span>{{i.name}}</span>
-                        </div>
-                        <v-spacer class="ml-3" style="border-bottom:1px dashed" />
-                        <div class="text-spacer">{{i.price}} {{currency}}</div>
-                    </v-layout>
-                </v-container>
-            </v-flex>
-        </v-layout>
-    </v-container>
+  <v-container>
+    <v-layout v-if="loading" justify-center>
+      <v-progress-circular color="primary" indeterminate />
+    </v-layout>
+    <template v-else>
+      <v-layout row align-baseline>
+        <v-flex xs10>
+          <h6 class="title mb-3 text-xs-center">{{name}}</h6>
+        </v-flex>
+        <v-flex xs2>
+          <v-layout column>
+            <v-switch v-model="isSelectedOnly" :prepend-icon="icon" :hint="'selected'" class="mt-0 pt-0" />
+            <div>Total: {{totalOrderCost}} {{currency}}</div>
+          </v-layout>
+        </v-flex>
+      </v-layout>
+      <v-layout row wrap>
+        <v-flex xs12 sm6 v-for="s in menuSorted" :key="s.id">
+          <h5 class="subheading font-weight-bold">{{s.name}}</h5>
+          <v-container grid-list-xl>
+            <v-layout row v-for="i in s.items" :key="i.id" justify-space-between v-show="!isSelectedOnly || isSelected(s.id,i.id)" align-baseline>
+              <div>
+                <span class="mr-2">
+                  <v-icon v-show="!isSelected(s.id,i.id)" size="20" @click="toggleStar(s.id,i.id)">star_border</v-icon>
+                  <v-icon v-show="isSelected(s.id,i.id)" size="20" @click="toggleStar(s.id,i.id)">star</v-icon>
+                </span>
+                <span>{{i.name}}</span>
+              </div>
+              <v-spacer class="ml-3" style="border-bottom:1px dashed" />
+              <div class="text-spacer">{{i.price}} {{currency}}</div>
+            </v-layout>
+          </v-container>
+        </v-flex>
+      </v-layout>
+    </template>
+  </v-container>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import { mapState, mapGetters } from "vuex";
+import { mapState, mapGetters, mapActions } from "vuex";
 import { Section, SectionItem } from "@/utils/types.ts";
 export default Vue.extend({
   data: () => ({
+    loading: false,
     starObj: {},
     isSelectedOnly: false
   }),
+  created() {
+    this.init();
+  },
   computed: {
     ...mapState("menu", ["name"]),
     ...mapState("menuSetting", ["currency"]),
@@ -66,6 +75,16 @@ export default Vue.extend({
     }
   },
   methods: {
+    ...mapActions("menu", ["getMenu"]),
+    async init() {
+      this.loading = true;
+      try {
+        //@ts-ignore
+        await this.getMenu();
+      } finally {
+        this.loading = false;
+      }
+    },
     toggleStar(s_id: number, i_id: number): void {
       const s = `s${s_id}`;
       const i = `i${i_id}`;

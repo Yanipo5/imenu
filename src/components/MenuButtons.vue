@@ -1,5 +1,5 @@
 <template>
-    <v-layout row wrap justify-center>
+    <v-layout row justify-center>
         <v-btn icon class="error" :disabled="isDisabled" @click.stop="$emit('delete')">
             <v-icon>delete</v-icon>
         </v-btn>

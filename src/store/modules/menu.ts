@@ -1,4 +1,7 @@
 import { Section, SectionItem } from "@/utils/types.ts";
+import client from "@/utils/graphql.ts";
+import gql from "graphql-tag";
+
 const { VUE_APP_STORAGE_MENU: storage } = process.env;
 interface state {
   name: string;
@@ -127,14 +130,48 @@ export default {
       const menu = getStorageMenu();
       if (!menu) return;
       s.sections = menu;
+    },
+    setMenu(s: state, menu: state): void {
+      Object.assign(s, menu);
     }
   },
   actions: {
-    storeMenu({ state: s }: { state: state }): void {
-      localStorage.setItem(storage, JSON.stringify(s.sections));
+    async saveMenu({ state, rootState }: { state: state; rootState: any }) {
+      const { id } = rootState.user;
+      const res = await client.mutate({
+        mutation: gql`
+          mutation($id: String!, $menu: String!) {
+            setUserMenu(id: $id, menu: $menu) {
+              id
+            }
+          }
+        `,
+        variables: {
+          id,
+          menu: JSON.stringify(state)
+        }
+      });
+      if (!res || !res.data || !res.data.user) return false;
+      return true;
     },
-    resetMenu({ commit }: any): void {
-      commit("resetMenu");
+    async getMenu({ rootState, commit }: { rootState: any; commit: Function }) {
+      const { id } = rootState.user;
+      const res = await client.query({
+        query: gql`
+          query($id: String!) {
+            user(id: $id) {
+              menu
+            }
+          }
+        `,
+        variables: { id }
+      });
+      //@ts-ignore
+      if (!res || !res.data || !res.data.user || !res.data.user.menu)
+        return false;
+      //@ts-ignore
+      commit("setMenu", JSON.parse(res.data.user.menu));
+      return true;
     }
   }
 };
